@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 
 type CardProps = {
     name: string;
@@ -49,7 +49,7 @@ export default function Card({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#1F2937', // dark gray for dark theme
+        backgroundColor: '#1F2937',
         borderRadius: 8,
         padding: 8,
         margin: 8,
