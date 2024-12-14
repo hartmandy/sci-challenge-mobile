@@ -1,50 +1,79 @@
-# Welcome to your Expo app 👋
+# SWU Card Gallery Dev Challenge 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A Mobile-first Expo app for displaying Star Wars Unlimited cards, with opportunities for enhancement and optimization. This project uses [Expo](https://expo.dev) with TypeScript and React Native.
 
-## Get started
+## 🚀 Getting Started
 
-1. Install dependencies
-
+1. Install dependencies:
    ```bash
-   npm install
+   yarn install
    ```
 
-2. Start the app
-
+2. Start the development environment:
    ```bash
-    npx expo start
+   # The app requires a proxy for API access
+   yarn web-with-proxy   # For web development
+   # or
+   yarn ios-with-proxy   # For iOS
+   # or
+   yarn android-with-proxy # For Android
    ```
 
-In the output, you'll find options to open the app in a
+> **Note**: You might encounter some lint and test issues when first starting the app. This is intentional - fixing these is part of the challenge!
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🎯 Challenge Tasks
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+1. **Fix and Run**:
+   - Address any lint or test errors you encounter
+   - Get the app running with the proxy service
+   - Ensure proper data fetching and display
 
-## Get a fresh project
+2. **Enhance the UI**:
+   - Add animations to the cards (e.g., on hover, sort, or load)
+   - Consider using react-native-reanimated or your preferred animation approach
+   - Optimize the layout for both mobile and web views
 
-When you're ready, run:
+3. **Optimize Performance**:
+   - Consider implementing loading states
+   - Handle edge cases in data fetching
+   - Optimize sorting operations
 
+## 🛠️ Development Tools
+
+- **Testing**: `yarn test`
+- **Linting**: `yarn lint`
+- **Validation**: `yarn validate`
+
+## 📱 Available Scripts
+
+- `yarn web-with-proxy`: Start web development with API proxy
+- `yarn ios-with-proxy`: Start iOS development with API proxy
+- `yarn android-with-proxy`: Start Android development with API proxy
+- `yarn test`: Run tests
+- `yarn lint`: Run linting
+
+## 🧪 Testing
+
+The app includes unit tests for core functionality. Run them with:
 ```bash
-npm run reset-project
+yarn test
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📝 Additional Notes
 
-## Learn more
+- The app uses a proxy service to handle CORS and API access
+- You'll need to fix existing issues before the app will run properly
+- Consider adding features like:
+   - Dark mode support
+   - Loading animations
+   - Improved error handling
+   - Search functionality
+   - Responsive design improvements
 
-To learn more about developing your project with Expo, look at the following resources:
+## 📚 Resources
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- [Expo Documentation](https://docs.expo.dev/)
+- [React Native Animation Guide](https://reactnative.dev/docs/animations)
+- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Good luck! We're excited to see your solutions and improvements! 🎉
