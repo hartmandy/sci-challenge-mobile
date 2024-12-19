@@ -1,22 +1,25 @@
-import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { useEffect } from "react";
+import { StyleSheet } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withRepeat,
   withSequence,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { ThemedText } from '@/components/ThemedText';
+import { ThemedText } from "../components/ThemedText";
 
 export function HelloWave() {
   const rotationAnimation = useSharedValue(0);
 
   useEffect(() => {
     rotationAnimation.value = withRepeat(
-        withSequence(withTiming(25, { duration: 150 }), withTiming(0, { duration: 150 })),
-        4
+      withSequence(
+        withTiming(25, { duration: 150 }),
+        withTiming(0, { duration: 150 })
+      ),
+      4
     );
   }, [rotationAnimation]); // Added to dependencies
 
@@ -25,9 +28,9 @@ export function HelloWave() {
   }));
 
   return (
-      <Animated.View style={animatedStyle}>
-        <ThemedText style={styles.text}>👋</ThemedText>
-      </Animated.View>
+    <Animated.View style={animatedStyle}>
+      <ThemedText style={styles.text}>👋</ThemedText>
+    </Animated.View>
   );
 }
 
