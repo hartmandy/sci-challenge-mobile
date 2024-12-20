@@ -5,7 +5,7 @@ const CardLoader = () => {
   const cards = Array(4).fill(0);
 
   return (
-    <View className="fixed inset-0 flex items-center justify-center">
+    <View className="fixed inset-0 flex items-center justify-center mt-[200px]">
       <View className="flex flex-row">
         {cards.map((_, index) => {
           const rotation = index % 2 === 0 ? "-3deg" : "3deg";

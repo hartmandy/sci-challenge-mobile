@@ -28,7 +28,7 @@ export const searchCards = async (
       params: {
         q: query,
         dir,
-        orderBy,
+        order: orderBy,
         pretty: true,
       },
     });

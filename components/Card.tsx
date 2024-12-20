@@ -53,10 +53,10 @@ export default function Card({
   }, [isPopoverOpen]);
 
   return (
-    <View className="w-full rounded-xl overflow-hidden border mb-2 dark:border-zinc-700 border-zinc-300">
+    <View className="w-full rounded-2xl overflow-hidden border mb-2 dark:border-zinc-700 border-zinc-300">
       <Popover onOpenChange={(open) => setIsPopoverOpen(open)}>
         <PopoverTrigger asChild>
-          <View className="w-full h-[515px]">
+          <View className="w-full h-[500px] inset-0">
             <Image
               source={{ uri: frontArt }}
               style={{ flex: 1 }}
@@ -67,6 +67,7 @@ export default function Card({
         </PopoverTrigger>
         <PopoverContent
           side={Platform.OS === "web" ? "bottom" : "bottom"}
+          sideOffset={-200}
           align="center"
           insets={contentInsets}
           className="w-80"
