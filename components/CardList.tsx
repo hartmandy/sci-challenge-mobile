@@ -1,180 +1,64 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import Card from "./Card";
-import { searchCards } from "../api/api";
+import React, { useState } from "react";
+import { Text, FlatList, Image } from "react-native";
+import { useColorScheme } from "../lib/useColorScheme";
+import CardComponent from "./Card";
+import { ThemedView } from "./ThemedView";
+import { useCardContext } from "~/contexts/CardContext";
+import CardLoader from "./CardLoader";
 
-type CardData = {
-  set: string;
-  number: string;
-  name: string;
-  type: string;
-  aspects: string[];
-  traits: string[];
-  arenas: string[];
-  cost: number;
-  power: number;
-  hp: number;
-  fronttext: string;
-  doublesided: boolean;
-  rarity: string;
-  unique: boolean;
-  artist: string;
-  varianttype: string;
-  marketprice: string;
-  foilprice: string;
-  frontArt: string;
-  id: string;
-};
+export default function CardList() {
+  const { cards, loading, error } = useCardContext();
+  const [isScrollEnabled, setIsScrollEnabled] = useState(true);
+  const { isDarkColorScheme } = useColorScheme();
+  const textColor = isDarkColorScheme ? "text-white" : "text-black";
 
-type CardListProps = {
-  hp: string;
-};
-
-export default function CardList({ hp }: CardListProps) {
-  const [cards, setCards] = useState<CardData[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [sortKey, setSortKey] = useState<keyof CardData>("name");
-
-  useEffect(() => {
-    if (!hp) return;
-
-    const fetchCardData = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const result = await searchCards(hp);
-        const formattedCards = Array.isArray(result.data)
-          ? result.data.map((card: any) => ({
-              set: card.Set,
-              number: card.Number,
-              name: card.Name,
-              type: card.Type,
-              aspects: card.Aspects,
-              traits: card.Traits,
-              arenas: card.Arenas,
-              cost: card.Cost,
-              power: card.Power,
-              hp: card.HP,
-              fronttext: card.FrontText,
-              doublesided: card.DoubleSided,
-              rarity: card.Rarity,
-              unique: card.Unique,
-              artist: card.Artist,
-              varianttype: card.VariantType,
-              marketprice: card.MarketPrice,
-              foilprice: card.FoilPrice,
-              frontArt: card.FrontArt,
-              id: `${card.Set}-${card.Number}`,
-            }))
-          : [];
-
-        setCards(
-          formattedCards.sort((a, b) => (a[sortKey] > b[sortKey] ? 1 : -1))
-        );
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-        setCards([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCardData();
-  }, [hp, sortKey]);
-
-  const sortCards = (key: keyof CardData) => {
-    setSortKey(key);
-    setCards([...cards].sort((a, b) => (a[key] > b[key] ? 1 : -1)));
+  const handlePopoverChange = (isOpen: boolean) => {
+    setIsScrollEnabled(!isOpen);
   };
 
-  const renderSortButton = (
-    label: string,
-    key: keyof CardData,
-    color: string
-  ) => (
-    <TouchableOpacity
-      style={[styles.sortButton, { backgroundColor: color }]}
-      onPress={() => sortCards(key)}
-    >
-      <Text style={styles.sortButtonText}>Sort by {label}</Text>
-    </TouchableOpacity>
-  );
-
   if (loading) {
-    return <Text style={styles.messageText}>Loading cards...</Text>;
+    return <CardLoader />;
   }
 
   if (error) {
-    return <Text style={styles.errorText}>Error: {error}</Text>;
+    return (
+      <ThemedView>
+        <Text className="text-red-500 text-lg font-semibold">
+          Error: {error}
+        </Text>
+      </ThemedView>
+    );
+  }
+
+  if (!loading && !error && cards.length === 0) {
+    return (
+      <ThemedView className="items-center mt-8">
+        <Image
+          source={require("../assets/images/grogu.png")}
+          style={{ width: 200, height: 230 }}
+        />
+        <Text className={`text-lg font-semibold mt-4 ${textColor}`}>
+          No results. Search again.
+        </Text>
+      </ThemedView>
+    );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.sortButtons}>
-        {renderSortButton("Name", "name", "#000000")}
-        {renderSortButton("Set", "set", "#000000")}
-        {renderSortButton("Cost", "cost", "#000000")}
-        {renderSortButton("Power", "power", "#000000")}
-      </View>
+    <ThemedView className="h-full">
       <FlatList
+        className="p-4 flex gap-2 flex-col"
         data={cards}
-        renderItem={({ item }) => <Card {...item} />}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => (
+          <CardComponent
+            key={item.id}
+            {...item}
+            onPopoverChange={handlePopoverChange}
+          />
+        )}
+        scrollEnabled={isScrollEnabled}
       />
-    </View>
+    </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#111827",
-  },
-  sortButtons: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 16,
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  sortButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    minWidth: 100,
-  },
-  sortButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  listContent: {
-    paddingBottom: 16,
-  },
-  messageText: {
-    textAlign: "center",
-    color: "#FFFFFF",
-    fontSize: 16,
-    padding: 16,
-  },
-  errorText: {
-    textAlign: "center",
-    color: "#EF4444",
-    fontSize: 16,
-    padding: 16,
-  },
-});

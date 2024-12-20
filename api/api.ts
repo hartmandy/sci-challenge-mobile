@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { SortOrder, SortKey } from "~/types";
 const BASE_URL = "http://localhost:8010/proxy"; // local-cors-proxy base URL
 
 export const fetchCatalog = async () => {
@@ -13,11 +13,22 @@ export const fetchCatalog = async () => {
   }
 };
 
-export const searchCards = async (hp: string) => {
+export const searchCards = async (
+  hp: string | null,
+  search: string,
+  orderBy: SortKey,
+  dir: SortOrder
+) => {
   try {
+    const query = [hp ? `h=${hp}` : "", search ? search : ""]
+      .filter(Boolean)
+      .join(" ");
+
     const response = await axios.get(`${BASE_URL}/cards/search`, {
       params: {
-        q: `h=${hp}`,
+        q: query,
+        dir,
+        orderBy,
         pretty: true,
       },
     });
