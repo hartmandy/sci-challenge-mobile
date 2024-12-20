@@ -1,94 +1,78 @@
-import "global.css";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Platform, Image, Pressable, View } from "react-native";
+import "~/global.css";
+import { Platform, Image, Pressable, View, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useColorScheme } from "../lib/useColorScheme";
-import CardSearch from "./card-search";
-import SavedCards from "./saved-cards";
-
+import Home from "./home";
 export { ErrorBoundary } from "expo-router";
-const Tab = createBottomTabNavigator();
+import { SplashScreen } from "expo-router";
+import * as React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { PortalHost } from "@rn-primitives/portal";
+import { CardProvider } from "~/contexts/CardContext";
 
 export default function RootLayout() {
-  const { toggleColorScheme, isDarkColorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme, toggleColorScheme, isDarkColorScheme } =
+    useColorScheme();
+  const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
   const iconColor = isDarkColorScheme ? "white" : "black";
 
+  React.useEffect(() => {
+    (async () => {
+      const theme = await AsyncStorage.getItem("theme");
+      if (Platform.OS === "web") {
+        document.documentElement.classList.add("bg-background");
+      }
+      if (!theme) {
+        AsyncStorage.setItem("theme", colorScheme);
+        setIsColorSchemeLoaded(true);
+        return;
+      }
+      const colorTheme = theme === "dark" ? "dark" : "light";
+      if (colorTheme !== colorScheme) {
+        setColorScheme(colorTheme);
+
+        setIsColorSchemeLoaded(true);
+        return;
+      }
+      setIsColorSchemeLoaded(true);
+    })().finally(() => {
+      SplashScreen.hideAsync();
+    });
+  }, []);
+
+  if (!isColorSchemeLoaded) {
+    return null;
+  }
+
   return (
-    <Tab.Navigator
-      initialRouteName="card-search"
-      screenOptions={{
-        headerShown: true,
-        headerShadowVisible: false,
-        headerStyle: {
-          backgroundColor: isDarkColorScheme ? "#000" : "#fff",
-        },
-        headerTitle: () => (
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 9999,
-              backgroundColor: "white",
-              padding: 8,
-              borderWidth: 1,
-              borderColor: "#D1D5DB",
-            }}
-          >
-            <Image
-              source={require("../assets/images/ship.png")}
-              style={{ width: 20, height: 20, resizeMode: "contain" }}
-            />
-          </View>
-        ),
-        headerRight: () => (
-          <Pressable onPress={toggleColorScheme} style={{ marginRight: 20 }}>
+    <CardProvider>
+      <View className="flex flex-row items-center justify-between p-4 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800">
+        <View className="w-6 h-6 p-4 rounded-full bg-white border dark:border-zinc-800 border-zinc-300 flex justify-center items-center">
+          <Image
+            source={require("../assets/images/ship.png")}
+            style={styles.headerImage}
+          />
+        </View>
+        <View>
+          <Pressable onPress={toggleColorScheme}>
             <MaterialCommunityIcons
               name={isDarkColorScheme ? "weather-sunny" : "weather-night"}
               size={24}
               color={iconColor}
             />
           </Pressable>
-        ),
-        tabBarStyle: {
-          ...Platform.select({
-            ios: { position: "absolute" },
-          }),
-          backgroundColor: isDarkColorScheme ? "#000" : "#fff",
-          borderTopWidth: 0,
-          borderBottomWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0,
-          shadowColor: "transparent",
-        },
-        tabBarActiveTintColor: isDarkColorScheme ? "white" : "black",
-        tabBarInactiveTintColor: isDarkColorScheme ? "#888" : "#666",
-      }}
-    >
-      <Tab.Screen
-        name="card-search"
-        component={CardSearch}
-        options={{
-          title: "Card Search",
-          tabBarIcon: () => (
-            <MaterialCommunityIcons name="cards" size={24} color={iconColor} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="saved-cards"
-        component={SavedCards}
-        options={{
-          title: "Saved Cards",
-          tabBarIcon: () => (
-            <MaterialCommunityIcons
-              name="cards-playing-heart-multiple"
-              size={24}
-              color={iconColor}
-            />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+        </View>
+      </View>
+      <Home />
+      <PortalHost />
+    </CardProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  headerImage: {
+    width: 20,
+    height: 20,
+    resizeMode: "contain",
+  },
+});
