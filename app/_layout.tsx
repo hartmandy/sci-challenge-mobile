@@ -1,5 +1,12 @@
 import "~/global.css";
-import { Platform, Image, Pressable, View, StyleSheet } from "react-native";
+import {
+  Platform,
+  Image,
+  Pressable,
+  View,
+  StyleSheet,
+  SafeAreaView,
+} from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useColorScheme } from "../lib/useColorScheme";
 import Home from "./home";
@@ -7,7 +14,6 @@ export { ErrorBoundary } from "expo-router";
 import { SplashScreen } from "expo-router";
 import * as React from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { PortalHost } from "@rn-primitives/portal";
 import { CardProvider } from "~/contexts/CardContext";
 
 export default function RootLayout() {
@@ -46,25 +52,26 @@ export default function RootLayout() {
 
   return (
     <CardProvider>
-      <View className="flex flex-row items-center justify-between p-4 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800">
-        <View className="w-6 h-6 p-4 rounded-full bg-white border dark:border-zinc-800 border-zinc-300 flex justify-center items-center">
-          <Image
-            source={require("../assets/images/ship.png")}
-            style={styles.headerImage}
-          />
-        </View>
-        <View>
-          <Pressable onPress={toggleColorScheme}>
-            <MaterialCommunityIcons
-              name={isDarkColorScheme ? "weather-sunny" : "weather-night"}
-              size={24}
-              color={iconColor}
+      <SafeAreaView style={{ flex: 1 }}>
+        <View className="flex flex-row items-center justify-between p-4 bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800">
+          <View className="w-6 h-6 p-4 rounded-full bg-white border dark:border-zinc-800 border-zinc-300 flex justify-center items-center">
+            <Image
+              source={require("../assets/images/ship.png")}
+              style={styles.headerImage}
             />
-          </Pressable>
+          </View>
+          <View>
+            <Pressable onPress={toggleColorScheme}>
+              <MaterialCommunityIcons
+                name={isDarkColorScheme ? "weather-sunny" : "weather-night"}
+                size={24}
+                color={iconColor}
+              />
+            </Pressable>
+          </View>
         </View>
-      </View>
-      <Home />
-      <PortalHost />
+        <Home />
+      </SafeAreaView>
     </CardProvider>
   );
 }

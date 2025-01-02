@@ -45,7 +45,7 @@ export default function CardList() {
   }
 
   return (
-    <ThemedView className="h-full">
+    <ThemedView className="flex-1">
       <FlatList
         className="p-4 flex gap-2 flex-col"
         data={cards}
